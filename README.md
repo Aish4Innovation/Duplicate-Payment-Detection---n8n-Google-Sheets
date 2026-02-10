@@ -7,6 +7,9 @@ Whenever a new row is added to the Google Sheet, the workflow checks whether the
 `invoice_no` already exists. If a duplicate is found, the payment status is
 automatically marked as **DUPLICATE**.
 
+<img width="1867" height="874" alt="image" src="https://github.com/user-attachments/assets/a69520b2-4765-44bc-a6d8-c371fd862a9f" />
+
+
 ---
 
 ## 🚀 Features
