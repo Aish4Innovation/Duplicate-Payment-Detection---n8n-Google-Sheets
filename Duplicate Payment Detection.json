@@ -1,0 +1,350 @@
+{
+  "name": "Duplicate Payment Detection",
+  "nodes": [
+    {
+      "parameters": {
+        "pollTimes": {
+          "item": [
+            {
+              "mode": "everyMinute"
+            }
+          ]
+        },
+        "documentId": {
+          "__rl": true,
+          "value": "1gplxemoDLyLBsIsPaCchi8pz2HD5ow_NNthDmtqI8t8",
+          "mode": "list",
+          "cachedResultName": "Payments_Data",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1gplxemoDLyLBsIsPaCchi8pz2HD5ow_NNthDmtqI8t8/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Pay",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1gplxemoDLyLBsIsPaCchi8pz2HD5ow_NNthDmtqI8t8/edit#gid=0"
+        },
+        "event": "rowAdded",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheetsTrigger",
+      "typeVersion": 1,
+      "position": [
+        0,
+        0
+      ],
+      "id": "27a07383-61a7-41d0-8ca7-6b81d47704e3",
+      "name": "Google Sheets Trigger",
+      "credentials": {
+        "googleSheetsTriggerOAuth2Api": {
+          "id": "NmTKfcbs22y3fBJh",
+          "name": "Google Sheets Trigger account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1gplxemoDLyLBsIsPaCchi8pz2HD5ow_NNthDmtqI8t8",
+          "mode": "list",
+          "cachedResultName": "Payments_Data",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1gplxemoDLyLBsIsPaCchi8pz2HD5ow_NNthDmtqI8t8/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Pay",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1gplxemoDLyLBsIsPaCchi8pz2HD5ow_NNthDmtqI8t8/edit#gid=0"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        208,
+        0
+      ],
+      "id": "f1ba8589-e425-41f7-9ed6-bcb62ce4474f",
+      "name": "Get row(s) in sheet",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "szrtr9eknT5KZKmA",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "4c88cf89-3c5f-44b0-85c8-5ce31c7536ec",
+              "name": "payment_id",
+              "value": "={{ $json.payment_id }}",
+              "type": "number"
+            },
+            {
+              "id": "1cdaa0a0-a777-4d77-bf9f-fa260d8ce05e",
+              "name": "vendor",
+              "value": "={{ $json.vendor }}",
+              "type": "string"
+            },
+            {
+              "id": "c9bfe658-6ce0-4756-ac3b-fb4f5b8678b5",
+              "name": "invoice_no",
+              "value": "={{ $json.invoice_no }}",
+              "type": "number"
+            },
+            {
+              "id": "057d6df2-62f1-444a-8a29-4a8622b2dadd",
+              "name": "amount",
+              "value": "={{ $json.amount }}",
+              "type": "number"
+            },
+            {
+              "id": "0ee14364-c13b-49b4-abb5-17ea35c353f1",
+              "name": "payment_date",
+              "value": "={{ $json.payment_date }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        64,
+        240
+      ],
+      "id": "4bdcdd73-2fb9-42d0-9c04-bae8de3da618",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "3b9f75f3-fb3c-4d5e-a04f-51f7fbefce2b",
+              "leftValue": "={{ $json.invoice_no }}",
+              "rightValue": "={{ $('Google Sheets Trigger').item.json.invoice_no }}",
+              "operator": {
+                "type": "number",
+                "operation": "equals"
+              }
+            },
+            {
+              "id": "1d58b4cf-3bc2-47cb-bfa0-5bee6739c543",
+              "leftValue": "={{ $json.vendor }}",
+              "rightValue": "={{ $('Google Sheets Trigger').item.json.vendor }}",
+              "operator": {
+                "type": "string",
+                "operation": "equals"
+              }
+            },
+            {
+              "id": "20e63151-07f8-495f-b647-3b42435f3ed8",
+              "leftValue": "={{ $json.amount }}",
+              "rightValue": "={{ $('Google Sheets Trigger').item.json.amount }}",
+              "operator": {
+                "type": "number",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        416,
+        0
+      ],
+      "id": "d745b1a1-761a-434d-acfd-50687555fab7",
+      "name": "If"
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "documentId": {
+          "__rl": true,
+          "value": "1gplxemoDLyLBsIsPaCchi8pz2HD5ow_NNthDmtqI8t8",
+          "mode": "list",
+          "cachedResultName": "Payments_Data",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1gplxemoDLyLBsIsPaCchi8pz2HD5ow_NNthDmtqI8t8/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Pay",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1gplxemoDLyLBsIsPaCchi8pz2HD5ow_NNthDmtqI8t8/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "row_number": "={{$json.row_number}}\n",
+            "status": "DUPLICATE"
+          },
+          "matchingColumns": [
+            "row_number"
+          ],
+          "schema": [
+            {
+              "id": "payment_id",
+              "displayName": "payment_id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "vendor",
+              "displayName": "vendor",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "invoice_no",
+              "displayName": "invoice_no",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "amount",
+              "displayName": "amount",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "payment_date",
+              "displayName": "payment_date",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "status",
+              "displayName": "status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "row_number",
+              "displayName": "row_number",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true,
+              "readOnly": true,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        624,
+        -96
+      ],
+      "id": "10cd1883-d697-402d-9670-7a9fb4513778",
+      "name": "Update row in sheet",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "szrtr9eknT5KZKmA",
+          "name": "Google Sheets account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Google Sheets Trigger": {
+      "main": [
+        [
+          {
+            "node": "Get row(s) in sheet",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get row(s) in sheet": {
+      "main": [
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        []
+      ]
+    },
+    "If": {
+      "main": [
+        [
+          {
+            "node": "Update row in sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": false
+  },
+  "versionId": "b3ab9b84-2a4e-4fec-a56d-bb31c574151e",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "537cd3ec6d8fc7cb87255d43cfb3750fa3a6a2deafd9bae5c13998baf7827549"
+  },
+  "id": "d5gkpuzSl0vNqFgExYAFl",
+  "tags": []
+}
